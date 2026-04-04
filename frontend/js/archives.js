@@ -1,7 +1,7 @@
 // Global variables
 let allArchives = [];
 let filteredArchives = [];
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://monastery360-2a8a.onrender.com';
 
 // Text-to-Speech variables
 let speechSynthesis = window.speechSynthesis;

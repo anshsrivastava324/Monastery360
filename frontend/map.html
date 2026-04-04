@@ -232,7 +232,7 @@ async function loadHotelsForMap() {
     const fetchTasks = Array.from(districtCenters.values()).map(async (coords) => {
         try {
             const [latitude, longitude] = coords;
-            const url = `http://localhost:5000/api/hotels/search?latitude=${latitude}&longitude=${longitude}&radius=35&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&adults=1`;
+            const url = `https://monastery360-2a8a.onrender.com/api/hotels/search?latitude=${latitude}&longitude=${longitude}&radius=35&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&adults=1`;
             const response = await fetch(url);
             const data = await response.json();
             return data.success ? (data.hotels || []) : [];
@@ -260,7 +260,7 @@ async function loadHotelsForMap() {
 // Fetch monasteries from API
 async function loadMonasteries() {
     try {
-        const response = await fetch('http://localhost:5000/api/monasteries');
+        const response = await fetch('https://monastery360-2a8a.onrender.com/api/monasteries');
         const data = await response.json();
         monasteries = data.monasteries || [];
 

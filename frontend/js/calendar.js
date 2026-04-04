@@ -1,7 +1,7 @@
 // Global variables
 let allEvents = [];
 let filteredEvents = [];
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://monastery360-2a8a.onrender.com';
 let currentLanguage = 'en';
 
 // Initialize on page load

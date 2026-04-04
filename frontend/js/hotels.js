@@ -1,7 +1,7 @@
 // Global variables
 let allHotels = [];
 let filteredHotels = [];
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://monastery360-2a8a.onrender.com';
 
 // Store last search parameters for re-searching with new dates
 let lastSearchParams = {
