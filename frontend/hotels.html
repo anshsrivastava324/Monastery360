@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotels - Monastery 360</title>
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/hotels.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar - Dark elegant theme -->
+    <nav id="navbar">
+        <div class="logo"><a href="index.html">MONASTERY 360</a></div>
+        <ul class="nav-links">
+            <li><a href="vtour.html">Virtual Tours</a></li>
+            <li><a href="map.html">Map</a></li>
+            <li><a href="calendar.html">Calendar</a></li>
+            <li><a href="hotels.html" class="active">Hotels</a></li>
+            <li><a href="archives.html">Archives</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="hotels-container">
+        <!-- Search Section -->
+        <div class="search-section">
+            <h1 class="page-title">Find Hotels Near Monasteries</h1>
+            
+            <div class="search-bar">
+                <input type="text" 
+                       id="searchInput" 
+                       placeholder="Search by location or monastery name..." 
+                       class="search-input">
+                
+                <div class="date-inputs">
+                    <input type="date" id="checkInDate" class="date-input" placeholder="Check-in">
+                    <input type="date" id="checkOutDate" class="date-input" placeholder="Check-out">
+                </div>
+                
+                <button onclick="searchHotels()" class="search-btn">
+                    🔍 Search Hotels
+                </button>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <div class="filter-group">
+                    <label>⭐ Rating</label>
+                    <select id="ratingFilter">
+                        <option value="all">All Ratings</option>
+                        <option value="4+">4+ Stars</option>
+                        <option value="3+">3+ Stars</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>💰 Price Range</label>
+                    <select id="priceFilter">
+                        <option value="all">All Prices</option>
+                        <option value="under50">Under $50</option>
+                        <option value="50-100">$50 - $100</option>
+                        <option value="100-200">$100 - $200</option>
+                        <option value="over200">$200+</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>✅ Availability</label>
+                    <select id="availabilityFilter">
+                        <option value="all">All Hotels</option>
+                        <option value="available">Available Only</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>📊 Sort By</label>
+                    <select id="sortBy">
+                        <option value="popularity">Popularity</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="rating-high">Rating: High to Low</option>
+                        <option value="rating-low">Rating: Low to High</option>
+                    </select>
+                </div>
+
+                <button onclick="resetFilters()" class="reset-btn">Reset Filters</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="results-section">
+            <div class="results-header">
+                <h2 id="resultsTitle">Search for hotels near any monastery</h2>
+                <p id="resultsCount"></p>
+            </div>
+
+            <!-- Hotels Grid -->
+            <div id="hotelsGrid" class="hotels-grid">
+                <!-- Hotels will be dynamically inserted here -->
+            </div>
+
+            <!-- No Results -->
+            <div id="noResults" class="no-results" style="display: none;">
+                <h3>😔 No hotels found</h3>
+                <p>Try adjusting your search criteria or filters</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/hotels.js"></script>
+</body>
+</html>

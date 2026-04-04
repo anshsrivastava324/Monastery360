@@ -1,0 +1,124 @@
+/* Unified Navbar Styling - Used across all pages */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap');
+
+html {
+    overflow-y: scroll;
+}
+
+/* Navigation Bar - Consistent across all pages */
+nav, #navbar, .navbar {
+    background: rgba(20, 12, 8, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 20px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+/* Logo Styles */
+.logo, .nav-brand {
+    font-size: 28px;
+    font-weight: 400;
+    color: #d4af37;
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+}
+
+.logo a, .nav-brand a {
+    color: #d4af37;
+    text-decoration: none;
+    transition: all 0.4s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo a:hover, .nav-brand a:hover {
+    color: #ffd700;
+    text-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
+}
+
+.nav-brand i {
+    font-size: 28px;
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Navigation Links */
+.nav-links, .nav-menu {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+}
+
+.nav-links a, .nav-menu a {
+    text-decoration: none;
+    color: #c9b88f;
+    font-size: 14px;
+    font-weight: 400;
+    transition: all 0.4s;
+    padding: 10px 0;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+    position: relative;
+}
+
+.nav-links a::after, .nav-menu a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: #d4af37;
+    transition: width 0.4s;
+}
+
+.nav-links a:hover,
+.nav-links a.active,
+.nav-menu a:hover,
+.nav-menu a.active {
+    color: #d4af37;
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after,
+.nav-menu a:hover::after,
+.nav-menu a.active::after {
+    width: 100%;
+}
+
+/* Mobile Nav Toggle */
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #d4af37;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* VTour specific navbar adjustments */
+.nav-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-menu li a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

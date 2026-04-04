@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map - Monastery360</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/navbar.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/map.css">
+</head>
+<body>
+    <!-- Navbar - Dark elegant theme -->
+    <nav id="navbar">
+        <div class="logo"><a href="index.html">MONASTERY 360</a></div>
+        <ul class="nav-links">
+            <li><a href="vtour.html">Virtual Tours</a></li>
+            <li><a href="map.html" class="active">Map</a></li>
+            <li><a href="calendar.html">Calendar</a></li>
+            <li><a href="hotels.html">Hotels</a></li>
+            <li><a href="archives.html">Archives</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <h3 class="sidebar-title">Filters</h3>
+
+            <div class="search-box">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search monasteries...">
+                </div>
+                <button class="search-btn" id="searchBtn" onclick="performSearch()">Go</button>
+            </div>
+
+            <div class="ornament">✦ ❖ ✦</div>
+
+            <div class="filter-group">
+                <label class="filter-label">Location</label>
+                <select class="filter-select" id="districtFilter">
+                    <option value="">All Districts</option>
+                    <option value="East Sikkim">East Sikkim</option>
+                    <option value="West Sikkim">West Sikkim</option>
+                    <option value="North Sikkim">North Sikkim</option>
+                    <option value="South Sikkim">South Sikkim</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">Tradition</label>
+                <select class="filter-select" id="traditionFilter">
+                    <option value="">All Traditions</option>
+                    <option value="Karma Kagyu">Karma Kagyu</option>
+                    <option value="Nyingmapa">Nyingmapa</option>
+                    <option value="Gelugpa">Gelugpa</option>
+                </select>
+            </div>
+
+            <div class="ornament">✦ ❖ ✦</div>
+        </aside>
+
+        <!-- Map and Card Wrapper -->
+        <div class="map-wrapper">
+            <!-- Map Container -->
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+
+            <!-- Monastery Card - AT BOTTOM -->
+            <div class="monastery-card" id="monasteryCard">
+                <button class="close-btn" onclick="closeCard()">×</button>
+                <div id="cardBody">
+                    <div class="card-empty-state">
+                        <div class="icon">📍</div>
+                        <p>Click on a monastery marker to view details</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+       // Archive ID mapping - PASTE YOUR ACTUAL IDs HERE
+const ARCHIVE_IDS = {
+    'Rumtek Monastery': '69444414e29111d0fa96f295',
+    'Pemayangtse Monastery': '69444414e29111d0fa96f29c',
+    'Enchey Monastery': '69444414e29111d0fa96f2a0',
+    'Tashiding Monastery': '69444414e29111d0fa96f2a1'
+};
+
+// Simple archive opener
+function openArchive(monasteryId, monasteryName) {
+    const archiveId = ARCHIVE_IDS[monasteryName];
+    if (archiveId) {
+        window.location.href = `/archives?id=${archiveId}`;
+    } else {
+        alert('📚 Archive coming soon!');
+    }
+}
+
+window.openArchive = openArchive;
+
+// Initialize map centered on Sikkim
+const map = L.map('map').setView([27.5330, 88.5122], 10);
+
+// Add standard OpenStreetMap tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 18
+}).addTo(map);
+
+// Store markers
+let markers = [];
+let monasteries = [];
+let hotels = [];
+
+// Custom red pin icon
+const redPinIcon = L.icon({
+    iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="32" height="48">
+            <path fill="#DC143C" stroke="#8B0000" stroke-width="1" d="M12 0C7.58 0 4 3.58 4 8c0 5.5 8 16 8 16s8-10.5 8-16c0-4.42-3.58-8-8-8z"/>
+            <circle cx="12" cy="8" r="3" fill="#FFF"/>
+        </svg>
+    `),
+    iconSize: [32, 48],
+    iconAnchor: [16, 48],
+    popupAnchor: [0, -48]
+});
+
+// Green pin for attractions
+const greenPinIcon = L.icon({
+    iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="28" height="42">
+            <path fill="#228B22" stroke="#006400" stroke-width="1" d="M12 0C7.58 0 4 3.58 4 8c0 5.5 8 16 8 16s8-10.5 8-16c0-4.42-3.58-8-8-8z"/>
+            <circle cx="12" cy="8" r="2.5" fill="#FFF"/>
+        </svg>
+    `),
+    iconSize: [28, 42],
+    iconAnchor: [14, 42],
+    popupAnchor: [0, -42]
+});
+
+// Blue pin for hotels
+const bluePinIcon = L.icon({
+    iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="28" height="42">
+            <path fill="#1E90FF" stroke="#0B3D91" stroke-width="1" d="M12 0C7.58 0 4 3.58 4 8c0 5.5 8 16 8 16s8-10.5 8-16c0-4.42-3.58-8-8-8z"/>
+            <circle cx="12" cy="8" r="2.5" fill="#FFF"/>
+        </svg>
+    `),
+    iconSize: [28, 42],
+    iconAnchor: [14, 42],
+    popupAnchor: [0, -42]
+});
+
+function getDefaultHotelDates() {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    return {
+        checkInDate: today.toISOString().split('T')[0],
+        checkOutDate: tomorrow.toISOString().split('T')[0]
+    };
+}
+
+function escapeHtml(value = '') {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function formatHotelPrice(hotel) {
+    if (!hotel.price || !hotel.price.perNight) {
+        return 'Compare on booking platforms';
+    }
+
+    return `INR ${hotel.price.perNight.toLocaleString('en-IN')} / night`;
+}
+
+function buildHotelPopup(hotel) {
+    const lat = hotel.coordinates?.latitude;
+    const lng = hotel.coordinates?.longitude;
+    const rating = typeof hotel.rating === 'number' ? hotel.rating.toFixed(1) : 'N/A';
+    const distance = hotel.distance || 'Distance available on map';
+    const availability = hotel.available ? 'Live price available' : 'Price unavailable right now';
+    const location = escapeHtml(hotel.location || 'Sikkim');
+    const name = escapeHtml(hotel.name || 'Hotel');
+    const redirectLocation = encodeURIComponent(hotel.location || hotel.name || 'Sikkim');
+    const hotelLink = `/hotels?lat=${lat}&lng=${lng}&location=${redirectLocation}`;
+
+    return `
+        <div class="hotel-popup-card">
+            <h4 class="hotel-popup-title">${name}</h4>
+            <p class="hotel-popup-location">${location}</p>
+            <div class="hotel-popup-meta">
+                <span>⭐ ${rating}</span>
+                <span>📍 ${escapeHtml(distance)}</span>
+            </div>
+            <div class="hotel-popup-price">${escapeHtml(formatHotelPrice(hotel))}</div>
+            <div class="hotel-popup-status">${escapeHtml(availability)}</div>
+            <div class="hotel-popup-actions">
+                <a class="hotel-popup-btn" href="${hotelLink}">View In Hotels Tab</a>
+            </div>
+        </div>
+    `;
+}
+
+async function loadHotelsForMap() {
+    if (!monasteries.length) return;
+
+    const { checkInDate, checkOutDate } = getDefaultHotelDates();
+
+    // Use one coordinate from each district to keep API calls limited but statewide.
+    const districtCenters = new Map();
+    monasteries.forEach(monastery => {
+        if (monastery?.district && !districtCenters.has(monastery.district)) {
+            districtCenters.set(monastery.district, monastery.coordinates);
+        }
+    });
+
+    const fetchTasks = Array.from(districtCenters.values()).map(async (coords) => {
+        try {
+            const [latitude, longitude] = coords;
+            const url = `http://localhost:5000/api/hotels/search?latitude=${latitude}&longitude=${longitude}&radius=35&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&adults=1`;
+            const response = await fetch(url);
+            const data = await response.json();
+            return data.success ? (data.hotels || []) : [];
+        } catch (error) {
+            console.warn('Hotel fetch failed for one district center:', error);
+            return [];
+        }
+    });
+
+    const resultSets = await Promise.all(fetchTasks);
+    const uniqueHotels = new Map();
+
+    resultSets.flat().forEach(hotel => {
+        if (!hotel?.coordinates?.latitude || !hotel?.coordinates?.longitude) return;
+        const hotelKey = hotel.hotelId || `${hotel.name}-${hotel.coordinates.latitude}-${hotel.coordinates.longitude}`;
+        if (!uniqueHotels.has(hotelKey)) {
+            uniqueHotels.set(hotelKey, hotel);
+        }
+    });
+
+    hotels = Array.from(uniqueHotels.values());
+    hotels.forEach(addHotelMarker);
+}
+
+// Fetch monasteries from API
+async function loadMonasteries() {
+    try {
+        const response = await fetch('http://localhost:5000/api/monasteries');
+        const data = await response.json();
+        monasteries = data.monasteries || [];
+
+        monasteries.forEach(monastery => {
+            addMonasteryMarker(monastery);
+        });
+
+        // Load attractions
+        const attractions = data.attractions || [];
+        attractions.forEach(attraction => {
+            addAttractionMarker(attraction);
+        });
+
+        await loadHotelsForMap();
+    } catch (error) {
+        console.error('Error loading data:', error);
+    }
+}
+
+// Add monastery marker
+function addMonasteryMarker(monastery) {
+    const marker = L.marker(monastery.coordinates, { 
+        icon: redPinIcon,
+        title: monastery.name
+    })
+        .addTo(map)
+        .on('click', () => showMonasteryCard(monastery));
+
+    markers.push({ marker, data: monastery, type: 'monastery' });
+}
+
+// Add attraction marker
+function addAttractionMarker(attraction) {
+    const marker = L.marker(attraction.coordinates, { 
+        icon: greenPinIcon,
+        title: attraction.name
+    })
+        .addTo(map)
+        .bindPopup(`<b>${attraction.name}</b><br>${attraction.type}`);
+
+    markers.push({ marker, data: attraction, type: 'attraction' });
+}
+
+function addHotelMarker(hotel) {
+    const lat = hotel.coordinates?.latitude;
+    const lng = hotel.coordinates?.longitude;
+
+    if (!lat || !lng) return;
+
+    const marker = L.marker([lat, lng], {
+        icon: bluePinIcon,
+        title: hotel.name || 'Hotel'
+    })
+        .addTo(map)
+        .bindPopup(buildHotelPopup(hotel), {
+            className: 'hotel-leaflet-popup',
+            maxWidth: 330
+        });
+
+    markers.push({ marker, data: hotel, type: 'hotel' });
+}
+
+// Show "No results found" message in card
+function showNoResults(searchQuery) {
+    const cardBody = document.getElementById('cardBody');
+
+    cardBody.innerHTML = `
+        <div class="no-results-state">
+            <div class="icon">🔍</div>
+            <div class="title">No Monastery Found</div>
+            <div class="message">
+                No monastery found matching "${searchQuery}".<br>
+                Try searching with a different name or browse the map.
+            </div>
+        </div>
+    `;
+
+    document.getElementById('monasteryCard').classList.add('active');
+}
+
+// Show monastery details card
+function showMonasteryCard(monastery) {
+    const cardBody = document.getElementById('cardBody');
+
+    cardBody.innerHTML = `
+        <div class="card-content">
+            <img src="${monastery.images && monastery.images[0] ? monastery.images[0] : 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=600'}" 
+                alt="${monastery.name}" class="card-image">
+            <div class="card-info">
+                <h2 class="card-title">${monastery.name}</h2>
+                <p class="card-description">${monastery.summary || monastery.description || 'A sacred monastery in the Himalayas.'}</p>
+
+                <div class="card-meta">
+                    <div class="card-meta-item">
+                        <strong>📍</strong> ${monastery.location}
+                    </div>
+                    <div class="card-meta-item">
+                        <strong>🙏</strong> ${monastery.tradition || 'Buddhist'}
+                    </div>
+                    <div class="card-meta-item">
+                        <strong>📅</strong> ${monastery.established || 'Ancient'}
+                    </div>
+                    <div class="card-meta-item">
+                        <strong>⛰️</strong> ${monastery.altitude || 'N/A'}m
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <button class="btn btn-primary" onclick="startVirtualTour('${monastery.virtualTourUrl || ''}')">
+                        🎥 Virtual Tour
+                    </button>
+                    <button class="btn btn-secondary" onclick="getDirections(${monastery.coordinates[0]}, ${monastery.coordinates[1]})">
+                        🗺️ Directions
+                    </button>
+                    <button class="btn btn-info" onclick="openArchive('${monastery.monasteryId || monastery._id}', '${monastery.name}')">
+                        📖 Read About
+                    </button>
+                    <button class="btn btn-hotel" onclick="findNearbyHotels(${monastery.coordinates[0]}, ${monastery.coordinates[1]}, '${monastery.name}')">
+                        🏨 Hotels Nearby
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('monasteryCard').classList.add('active');
+}
+
+// Function to find nearby hotels
+function findNearbyHotels(latitude, longitude, monasteryName) {
+    console.log('🏨 Finding hotels near:', monasteryName);
+    console.log('📍 Coordinates:', latitude, longitude);
+    
+    // Redirect to hotels page with coordinates (NOT monastery name)
+    window.location.href = `/hotels?lat=${latitude}&lng=${longitude}&location=${encodeURIComponent(monasteryName)}`;
+}
+
+// Close card
+function closeCard() {
+    const card = document.getElementById('monasteryCard');
+    card.classList.remove('active');
+
+    setTimeout(() => {
+        document.getElementById('cardBody').innerHTML = `
+            <div class="card-empty-state">
+                <div class="icon">📍</div>
+                <p>Click on a monastery marker to view details</p>
+            </div>
+        `;
+    }, 300);
+}
+
+// Virtual tour
+function startVirtualTour(url) {
+    if (url) {
+        window.open(url, '_blank');
+    } else {
+        alert('Virtual tour not available for this monastery yet.');
+    }
+}
+
+// Get directions
+function getDirections(lat, lng) {
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+}
+
+// Perform search function - triggered by button
+function performSearch() {
+    filterMarkers();
+
+    // If there's a search query, zoom to first matching monastery
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+    if (searchQuery) {
+        const matchingMarker = markers.find(({ data, type }) => 
+            type === 'monastery' && data.name.toLowerCase().includes(searchQuery)
+        );
+
+        if (matchingMarker) {
+            map.setView(matchingMarker.data.coordinates, 13);
+            showMonasteryCard(matchingMarker.data);
+        } else {
+            // Show "no results" message in card instead of alert
+            showNoResults(searchQuery);
+        }
+    }
+}
+
+// Allow Enter key to trigger search
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        performSearch();
+    }
+});
+
+// Real-time search as you type
+document.getElementById('searchInput').addEventListener('input', filterMarkers);
+document.getElementById('districtFilter').addEventListener('change', filterMarkers);
+document.getElementById('traditionFilter').addEventListener('change', filterMarkers);
+
+// Filter markers
+function filterMarkers() {
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    const district = document.getElementById('districtFilter').value;
+    const tradition = document.getElementById('traditionFilter').value;
+
+    markers.forEach(({ marker, data, type }) => {
+        if (type !== 'monastery') {
+            marker.addTo(map);
+            return;
+        }
+
+        let show = true;
+
+        if (searchQuery && !data.name.toLowerCase().includes(searchQuery)) {
+            show = false;
+        }
+
+        if (district && data.district !== district) {
+            show = false;
+        }
+
+        if (tradition && data.tradition !== tradition) {
+            show = false;
+        }
+
+        if (show) {
+            marker.addTo(map);
+        } else {
+            map.removeLayer(marker);
+        }
+    });
+}
+
+// Load data on page load
+loadMonasteries();
+
+    </script>
+</body>
+</html>

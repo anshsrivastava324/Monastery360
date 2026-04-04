@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events Calendar - Monastery 360</title>
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/calendar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar - Dark elegant theme -->
+    <nav id="navbar">
+        <div class="logo"><a href="index.html">MONASTERY 360</a></div>
+        <ul class="nav-links">
+            <li><a href="vtour.html">Virtual Tours</a></li>
+            <li><a href="map.html">Map</a></li>
+            <li><a href="calendar.html" class="active">Calendar</a></li>
+            <li><a href="hotels.html">Hotels</a></li>
+            <li><a href="archives.html">Archives</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="calendar-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Festival & Events Calendar</h1>
+            <p class="page-subtitle">Discover spiritual celebrations, rituals, and cultural events across Himalayan monasteries</p>
+        </div>
+
+        <!-- Filters Section -->
+    <div class="filters-section">
+        <div class="filter-row">
+            <!-- Search -->
+            <div class="filter-group">
+                <label>🔍 Search Events or Monasteries</label>
+                <input type="text" id="searchInput" placeholder="Search festivals, rituals, monastery names..." class="search-input">
+            </div>
+
+            <!-- Date Range -->
+            <div class="filter-group">
+                <label>📅 From Date</label>
+                <input type="date" id="startDate" class="date-input">
+            </div>
+
+            <div class="filter-group">
+                <label>📅 To Date</label>
+                <input type="date" id="endDate" class="date-input">
+            </div>
+
+            <!-- Event Type -->
+            <div class="filter-group">
+                <label>🎭 Event Type</label>
+                <select id="eventType" class="filter-select">
+                    <option value="">All Types</option>
+                    <option value="Festival">Festival</option>
+                    <option value="Ritual">Ritual</option>
+                    <option value="Ceremony">Ceremony</option>
+                    <option value="Prayer Session">Prayer Session</option>
+                    <option value="Cultural Performance">Cultural Performance</option>
+                    <option value="Teaching">Teaching</option>
+                    <option value="Celebration">Celebration</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filter-row">
+            <!-- Monastery Filter -->
+            <div class="filter-group">
+                <label>🏛️ Monastery</label>
+                <select id="monastery" class="filter-select">
+                    <option value="">All Monasteries</option>
+                    <option value="Rumtek Monastery">Rumtek Monastery</option>
+                    <option value="Pemayangtse Monastery">Pemayangtse Monastery</option>
+                    <option value="Tashiding Monastery">Tashiding Monastery</option>
+                    <option value="Enchey Monastery">Enchey Monastery</option>
+                    <option value="Dubdi Monastery">Dubdi Monastery</option>
+                    <option value="Ralang Monastery">Ralang Monastery</option>
+                    <option value="Phensang Monastery">Phensang Monastery</option>
+                    <option value="Phodong Monastery">Phodong Monastery</option>
+                </select>
+            </div>
+
+            <!-- Region (Sikkim Specific) -->
+            <div class="filter-group">
+                <label>🏔️ Region</label>
+                <select id="region" class="filter-select">
+                    <option value="">All Regions</option>
+                    <option value="East Sikkim">East Sikkim</option>
+                    <option value="West Sikkim">West Sikkim</option>
+                    <option value="North Sikkim">North Sikkim</option>
+                    <option value="South Sikkim">South Sikkim</option>
+                </select>
+            </div>
+
+            <!-- Tourist Access -->
+            <div class="filter-group">
+                <label>👥 Tourist Access</label>
+                <select id="touristAccess" class="filter-select">
+                    <option value="">All Events</option>
+                    <option value="Yes">Open to Tourists</option>
+                    <option value="Restricted">Restricted Access</option>
+                </select>
+            </div>
+
+            <!-- Language -->
+            <div class="filter-group">
+                <label>🌐 Language</label>
+                <select id="language" class="filter-select">
+                    <option value="en">English</option>
+                    <option value="hi">हिंदी (Hindi)</option>
+                    <option value="ti">བོད་ཡིག (Tibetan)</option>
+                    <option value="ne">नेपाली (Nepali)</option>
+                </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="filter-group">
+                <button onclick="searchEvents()" class="search-btn">Search Events</button>
+                <button onclick="resetFilters()" class="reset-btn">Reset</button>
+            </div>
+        </div>
+    </div>
+
+
+        <!-- Quick Filters -->
+        <div class="quick-filters">
+            <button onclick="filterUpcoming()" class="quick-filter-btn">🔜 Upcoming Events</button>
+            <button onclick="filterFeatured()" class="quick-filter-btn">⭐ Featured Events</button>
+            <button onclick="filterThisMonth()" class="quick-filter-btn">📅 This Month</button>
+            <button onclick="filterThisWeek()" class="quick-filter-btn">📆 This Week</button>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="results-section">
+            <div class="results-header">
+                <h2 id="resultsTitle">Upcoming Events</h2>
+                <p id="resultsCount"></p>
+            </div>
+
+            <!-- Events Grid -->
+            <div id="eventsGrid" class="events-grid">
+                <!-- Events will be dynamically inserted here -->
+            </div>
+
+            <!-- No Results -->
+            <div id="noResults" class="no-results" style="display: none;">
+                <h3>📅 No events found</h3>
+                <p>Try adjusting your search criteria or filters</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/calendar.js"></script>
+</body>
+</html>

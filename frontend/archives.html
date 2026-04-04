@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archives - Monastery 360</title>
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/archives.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+<body>
+    <nav id="navbar">
+        <div class="logo"><a href="index.html">MONASTERY 360</a></div>
+        <ul class="nav-links">
+            <li><a href="vtour.html">Virtual Tours</a></li>
+            <li><a href="map.html">Map</a></li>
+            <li><a href="calendar.html">Calendar</a></li>
+            <li><a href="hotels.html">Hotels</a></li>
+            <li><a href="archives.html" class="active">Archives</a></li>
+        </ul>
+    </nav>
+
+
+    <!-- Main Content -->
+    <div class="archives-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Monastery Archives</h1>
+            <p class="page-subtitle">Explore the rich history, culture, and heritage of Himalayan monasteries</p>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search monasteries by name..." class="search-input">
+                <button onclick="searchArchives()" class="search-btn">
+                    <span>🔍</span> Search
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section">
+            <div class="results-header">
+                <h2 id="resultsTitle">All Archives</h2>
+                <p id="resultsCount"></p>
+            </div>
+
+            <!-- Archives Grid -->
+            <div id="archivesGrid" class="archives-grid">
+                <!-- Archive cards will be dynamically inserted here -->
+            </div>
+
+            <!-- No Results -->
+            <div id="noResults" class="no-results" style="display: none;">
+                <h3>📚 No archives found</h3>
+                <p>Try searching for a different monastery name</p>
+            </div>
+        </div>
+    </div>
+
+<!-- Audio Guide Modal -->
+<div id="audioGuideModal" class="audio-modal">
+    <div class="audio-modal-content">
+        <!-- Close Button -->
+        <button class="audio-close-btn" onclick="closeAudioGuide()">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <!-- Audio Icon -->
+        <div class="audio-icon">
+            <i class="fas fa-music"></i>
+        </div>
+
+        <!-- Title - UPDATED TO SHOW MONASTERY NAME -->
+        <h3 class="audio-title">Audio Guide</h3>
+
+        <!-- Progress Bar -->
+        <div class="audio-progress-container">
+            <span id="currentTime" class="audio-time">0:00</span>
+            <input type="range" id="audioProgress" class="audio-progress-bar" min="0" max="100" value="0" disabled>
+            <span id="audioDuration" class="audio-time">0:00</span>
+        </div>
+
+        <!-- Playback Controls -->
+        <div class="audio-controls">
+            <button id="rewind10" class="audio-control-btn" onclick="rewind()" title="Restart from beginning">
+                <i class="fas fa-undo"></i>
+            </button>
+
+            <button id="playPauseBtn" class="audio-play-btn" onclick="togglePlayPause()" title="Play/Pause">
+                <i class="fas fa-play"></i>
+            </button>
+
+            <button id="forward10" class="audio-control-btn" onclick="forward()" title="Skip to end">
+                <i class="fas fa-forward"></i>
+            </button>
+        </div>
+
+
+        <!-- Volume Control -->
+        <div class="audio-volume-container">
+            <i class="fas fa-volume-down"></i>
+            <input type="range" id="volumeSlider" class="audio-volume-slider" min="0" max="100" value="70" oninput="updateVolume()">
+            <i class="fas fa-volume-up"></i>
+        </div>
+
+        <!-- Language Selector -->
+        <div class="audio-language-selector">
+            <i class="fas fa-globe"></i>
+            <label for="audioLanguage">Language</label>
+            <select id="audioLanguage" class="audio-language-dropdown" onchange="changeAudioLanguage()">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी (Hindi)</option>
+                <option value="ne">नेपाली (Nepali)</option>
+                <option value="si">སིཀྐིམ (Sikkimese)</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+
+
+
+    <!-- Archive View Modal -->
+    <div id="archiveViewModal" class="archive-view-modal">
+        <div class="archive-view-content">
+            <button class="view-close" onclick="closeArchiveView()">&times;</button>
+            <div id="archiveViewBody">
+                <!-- Archive content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/archives.js"></script>
+</body>
+</html>
